@@ -14,10 +14,19 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
+
+//Se agregaron las siguientes librerias para la conexión 
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import javax.swing.JOptionPane;
+import com.mycompany.administradorproyecto.bd.ConexionBD;
+
 /**
  *
  * @author USUARIO
  */
+
 public class AltasChecadores extends JFrame {
     //Constructor
     public AltasChecadores() {
@@ -76,11 +85,35 @@ public class AltasChecadores extends JFrame {
         RoundedButton btnRegistrarDpt = new RoundedButton(
                 "<html><center>Registrar<br>departamento</center></html>", morado);
         btnRegistrarDpt.setBounds(50, 185, 170, 55);
-        /*
+        
         btnRegistrarDpt.addActionListener(e -> {
-            // lógica de registro de departamento
+            // Obtenemos lo que el usuario escribió (ignoro el txtIdDpt porque en tu BD es AUTO_INCREMENT)
+            String nombreDpt = txtNombreDpt.getText().trim();
+            
+            if (nombreDpt.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "El nombre del departamento no puede estar vacío");
+                return;
+            }
+
+            // Conectamos a AWS e insertamos el dato
+            try (Connection con = ConexionBD.conectar()) {
+                if (con != null) {
+                    // Preparamos la consulta SQL para tu tabla 'departamento'
+                    String sql = "INSERT INTO departamento (nombre_dep) VALUES (?)";
+                    PreparedStatement ps = con.prepareStatement(sql);
+                    ps.setString(1, nombreDpt);
+                    
+                    ps.executeUpdate();
+                    JOptionPane.showMessageDialog(this, "¡Departamento guardado exitosamente en AWS!");
+                    
+                    // Limpiar el campo de texto
+                    txtNombreDpt.setText("");
+                }
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Error al guardar: " + ex.getMessage());
+            }
         });
-        */
+        
         panel.add(btnRegistrarDpt);
 
         // ── SECCIÓN DERECHA: UBICACIÓN ──────────────────────────

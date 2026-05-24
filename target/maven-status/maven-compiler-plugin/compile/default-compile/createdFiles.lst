@@ -15,5 +15,6 @@ com\mycompany\administradorproyecto\ventanas\BajasYConsultas.class
 com\mycompany\administradorproyecto\ventanas\EmpleadosByC.class
 com\mycompany\administradorproyecto\ventanas\EmpleadosAlta.class
 com\mycompany\administradorproyecto\disenio\RoundedTextField.class
+com\mycompany\administradorproyecto\bd\ConexionBD.class
 com\mycompany\administradorproyecto\disenio\RoundedButton.class
 com\mycompany\administradorproyecto\model\Checadas$2.class
