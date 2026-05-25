@@ -58,9 +58,9 @@ public class Checadas extends JFrame {
         Color amarillo = new Color(255, 200, 80);
         RoundedButton btnBuscar = new RoundedButton("Buscar", amarillo);
         btnBuscar.setBounds(570, 75, 120, 35);
-        /*
-        btnBuscar.addActionListener(e -> { });
-        */
+        btnBuscar.addActionListener(e -> {
+            
+        });
         panel.add(btnBuscar);
 
         //TABLA 

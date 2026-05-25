@@ -24,9 +24,9 @@ public class PanelDecorativo extends JPanel{
         g2.fillRect(0, 0, getWidth(), getHeight());
         //DECORACIONES AZULES
         g2.setColor(new Color(79, 190, 220));
-        g2.fillOval(-40, -40, 100, 100);// Superior izquierda
-        g2.fillOval(500, -40, 160, 90);// Superior derecha
-        g2.fillOval(-30, 300, 140, 100);// Inferior izquierda
-        g2.fillOval(580, 260, 100, 100);// Inferior derecha
+        g2.fillOval(-80, -80, 200, 200);// Superior izquierda
+        g2.fillOval(630, -80, 200, 200);// Superior derecha
+        g2.fillOval(-80, 440, 200, 200);// Inferior izquierda
+        g2.fillOval(630, 440, 200, 200);// Inferior derecha
     }
 }

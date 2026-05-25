@@ -1,28 +1,26 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.administradorproyecto.ventanas;
 
-import com.mycompany.administradorproyecto.disenio.PanelDecorativo;
-import com.mycompany.administradorproyecto.disenio.RoundedButton;
-import com.mycompany.administradorproyecto.disenio.RoundedComboBox;
-import com.mycompany.administradorproyecto.disenio.RoundedTextField;
-import java.awt.Color;
-import java.awt.Font;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
+import com.mycompany.administradorproyecto.bd.ConexionBD;
+import com.mycompany.administradorproyecto.disenio.*;
+import java.awt.*;
+import java.sql.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class HorariosByC extends JFrame {
-    //Constructor
+
+    private RoundedTextField txtGrupoBusqueda;
+    private JTable tablaResultados;
+    private DefaultTableModel modeloTabla;
+    private JScrollPane scroll;
+
     public HorariosByC() {
         configurarVentana();
         crearComponentes();
     }
-    //Vista general de la ventana
+
     private void configurarVentana() {
-        setTitle("Horarios");
+        setTitle("Consulta de Horarios");
         setSize(750, 550);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -31,104 +29,81 @@ public class HorariosByC extends JFrame {
     }
 
     private void crearComponentes() {
-        //Diseño del fondo
         PanelDecorativo panel = new PanelDecorativo();
-        panel.setBounds(0, 0, 700, 450);
+        panel.setBounds(0, 0, 750, 550);
         panel.setLayout(null);
         setContentPane(panel);
 
-        // Horarios 
-        JLabel lblTitulo = new JLabel("BAJAS Y CONSULTAS DE HORARIOS");
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 26));
-        lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-        lblTitulo.setBounds(50, 10, 600, 40);
-        panel.add(lblTitulo);
+        // --- BÚSQUEDA ---
+        JLabel lblBusqueda = new JLabel("ID GRUPO:");
+        lblBusqueda.setFont(new Font("Arial", Font.BOLD, 18));
+        lblBusqueda.setBounds(150, 30, 100, 35);
+        panel.add(lblBusqueda);
 
-        // FILA 1 — ID  / Hora de inicio
-        panel.add(crearLabel("ID"));//ID
-        JLabel lblId = crearLabel("ID");
-        lblId.setBounds(50, 65, 120, 30);
-        panel.add(lblId);
+        txtGrupoBusqueda = new RoundedTextField();
+        txtGrupoBusqueda.setBounds(260, 30, 150, 35);
+        panel.add(txtGrupoBusqueda);
+
+        Color azul = new Color(79, 190, 220);
+        RoundedButton btnBuscar = new RoundedButton("BUSCAR", azul);
+        btnBuscar.setBounds(430, 30, 120, 35);
+        btnBuscar.addActionListener(e -> buscarHorario());
+        panel.add(btnBuscar);
+
+        // Tabla que al inicio va a estar innvisible
+        String[] columnas = {"Matrícula", "Materia", "Inicio", "Fin", "Días", "Aula", "Checador"};
+        modeloTabla = new DefaultTableModel(columnas, 0);
+        tablaResultados = new JTable(modeloTabla);
         
-        RoundedTextField txtId = new RoundedTextField();
-        txtId.setText("000000");
-        txtId.setBounds(180, 65, 120, 35);
-        panel.add(txtId);
-
-        JLabel lblHrInicio = crearLabel("INICIO");//hora de inicio
-        lblHrInicio.setBounds(360, 65, 130, 30);
-        panel.add(lblHrInicio);
-
-        RoundedTextField txtHrInicio = new RoundedTextField();
-        txtHrInicio.setText("0000");
-        txtHrInicio.setBounds(500, 65, 120, 35);
-        panel.add(txtHrInicio);
-
-        // FILA 2 — Tipo de empleado / Hora de fin
-        JLabel lblTipoEmp = crearLabel("EMPLEADO"); //Tipo de Empleado
-        lblTipoEmp.setBounds(50, 130, 120, 30);
-        panel.add(lblTipoEmp);
-
-        RoundedComboBox cmbTipoEmp = new RoundedComboBox(new String[]{"Profesor", "Laboratorista", "Noob"});
-        cmbTipoEmp.setBounds(180, 130, 120, 35);
-        panel.add(cmbTipoEmp);
-        
-        JLabel lblHrFin = crearLabel("INICIO");//hora de fin
-        lblHrFin.setBounds(360, 130, 130, 30);
-        panel.add(lblHrFin);
-
-        RoundedTextField txtHrFin = new RoundedTextField();
-        txtHrFin.setText("0000");
-        txtHrFin.setBounds(500, 130, 120, 35);
-        panel.add(txtHrFin);
-        
-        // FILA 3 — Grupo / Aula
-        JLabel lblGrupo = crearLabel("GRUPO"); //Grupo
-        lblGrupo.setBounds(50, 200, 120, 30);
-        panel.add(lblGrupo);
-
-        RoundedComboBox cmbGrupo = new RoundedComboBox(new String[]{"sheccid", "chechid", "chesid"});
-        cmbGrupo.setBounds(180, 200, 120, 35);
-        panel.add(cmbGrupo);
-        
-        JLabel lblAula = crearLabel("AULA");//Aula
-        lblAula.setBounds(360, 200, 130, 30);
-        panel.add(lblAula);
-
-        RoundedTextField txtAula = new RoundedTextField();
-        txtAula.setText("0000");
-        txtAula.setBounds(500, 200, 120, 35);
-        panel.add(txtAula);
-
-        //FILA 4 - Días de la semana / Botón terminar registro
-        JLabel lblDiasSem = crearLabel("DIAS DE LA SEMANA");//Aula
-        lblDiasSem.setBounds(50, 270, 200, 30);
-        panel.add(lblDiasSem);
-
-        RoundedTextField txtDiasSem = new RoundedTextField();
-        txtDiasSem.setText("0000");
-        txtDiasSem.setBounds(270, 270, 120, 35);
-        panel.add(txtDiasSem);
-
-        //Colores para botones
-        Color azul   = new Color(79, 190, 220);
-        Color amarillo = new Color(255, 200, 80);
-        Color rosa   = new Color(255, 100, 130);
-
-        //Botones de busqueda y eliminación
-        RoundedButton btnConsulta = new RoundedButton("Buscar", azul);
-        btnConsulta.setBounds(160, 320, 170, 40);
-        panel.add(btnConsulta);
-        
-        RoundedButton btnBaja = new RoundedButton("Eliminar", rosa);
-        btnBaja.setBounds(360, 320, 170, 40);
-        panel.add(btnBaja);
-
+        scroll = new JScrollPane(tablaResultados);
+        scroll.setBounds(50, 100, 650, 350);
+        scroll.setVisible(false); // La tabla no se ve hasta que haya resultados
+        panel.add(scroll);
     }
 
-    private JLabel crearLabel(String texto) {
-        JLabel label = new JLabel(texto);
-        label.setFont(new Font("Arial", Font.BOLD, 18));
-        return label;
+    private void buscarHorario() {
+        String idGrupo = txtGrupoBusqueda.getText().trim();
+
+        if (idGrupo.isEmpty()) {
+            CustomDialog.mostrar(this, "Por favor, ingrese un ID de grupo.", CustomDialog.Tipo.ADVERTENCIA);
+            return;
+        }
+
+        modeloTabla.setRowCount(0); // Limpiar tabla antes de nueva búsqueda
+
+        String sql = "SELECT matricula, clave_materia, hora_inicio, hora_fin, dia_semana, aula, id_checador " +
+                     "FROM Horario_Clase WHERE clave_grupo = ?";
+
+        try (Connection con = ConexionBD.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, idGrupo); // Sigue igual porque es la búsqueda del usuario
+            try (ResultSet rs = ps.executeQuery()) {
+                boolean encontrado = false;
+                while (rs.next()) {
+                    encontrado = true;
+                    modeloTabla.addRow(new Object[]{
+                        rs.getString("matricula"),
+                        rs.getString("clave_materia"),
+                        rs.getTime("hora_inicio"),
+                        rs.getTime("hora_fin"),
+                        rs.getString("dia_semana"),
+                        rs.getString("aula"),
+                        rs.getInt("id_checador") 
+                    });
+                }
+
+                if (encontrado) {
+                    scroll.setVisible(true); // Mostrar tabla
+                } else {
+                    scroll.setVisible(false); // Ocultar tabla si no hay datos
+                    CustomDialog.mostrar(this, "No se encontraron horarios para el grupo: " + idGrupo, CustomDialog.Tipo.ADVERTENCIA);
+                }
+                this.revalidate();
+                this.repaint();
+            }
+        } catch (SQLException e) {
+            CustomDialog.mostrar(this, "Error al conectar con la base de datos:\n" + e.getMessage(), CustomDialog.Tipo.ERROR);
+        }
     }
 }

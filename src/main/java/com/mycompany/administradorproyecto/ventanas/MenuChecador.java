@@ -51,26 +51,6 @@ public class MenuChecador extends JFrame{
         // Color para botón
         Color morado = new Color(130, 130, 240);
 
-        // Botón Altas
-        RoundedButton btnAltas = new RoundedButton("Altas", morado);
-        btnAltas.setBounds(220, 120, 200, 45);
-        
-        btnAltas.addActionListener(e -> {
-            new AltasChecadores().setVisible(true);
-        });
-        
-        panel.add(btnAltas);
-
-        // Botón Bajas y Consultas
-        RoundedButton btnBajasConsultas = new RoundedButton("<html><center>Bajas y<br>Consultas</center></html>", morado);
-        btnBajasConsultas.setBounds(220, 195, 200, 55);
-        
-        btnBajasConsultas.addActionListener(e -> {
-            new BajasYConsultas().setVisible(true);
-        });
-        
-        panel.add(btnBajasConsultas);
-
         // Botón Checadas
         RoundedButton btnChecadas = new RoundedButton("Checadas", morado);
         btnChecadas.setBounds(220, 275, 200, 45);

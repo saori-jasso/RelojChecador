@@ -1,28 +1,39 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.administradorproyecto.ventanas;
 
+import com.mycompany.administradorproyecto.bd.ConexionBD; 
 import com.mycompany.administradorproyecto.disenio.PanelDecorativo;
 import com.mycompany.administradorproyecto.disenio.RoundedButton;
 import com.mycompany.administradorproyecto.disenio.RoundedComboBox;
 import com.mycompany.administradorproyecto.disenio.RoundedTextField;
+import com.toedter.calendar.JDateChooser; // ¡NUEVO!: Importamos la librería del calendario
+
 import java.awt.Color;
 import java.awt.Font;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 public class EmpleadosAlta extends JFrame {
-    //Constructor
+    
+    // Declaramos los componentes como variables globales
+    private RoundedTextField txtNombre, txtApellidoP, txtApellidoM;
+    private RoundedComboBox cmbPuesto;
+    private JDateChooser jdFechaNac, jdFechaIng; // ¡NUEVO!: Cambiamos a JDateChooser
+    private RoundedButton btnRegistrar;
+
+    // Constructor
     public EmpleadosAlta() {
         configurarVentana();
         crearComponentes();
     }
-    //Vista general de la ventana
+    
+    // Vista general de la ventana
     private void configurarVentana() {
-        setTitle("Alta de empleados");
+        setTitle("Alta de Empleados");
         setSize(750, 550);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -31,116 +42,175 @@ public class EmpleadosAlta extends JFrame {
     }
 
     private void crearComponentes() {
-        //Diseño del fondo
+        // Diseño del fondo
         PanelDecorativo panel = new PanelDecorativo();
-        panel.setBounds(0, 0, 700, 450);
+        panel.setBounds(0, 0, 750, 500);
         panel.setLayout(null);
         setContentPane(panel);
 
-        // Horarios 
+        // TÍTULO principal
         JLabel lblTitulo = new JLabel("ALTA DE EMPLEADOS");
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 26));
         lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-        lblTitulo.setBounds(150, 10, 400, 40);
+        lblTitulo.setBounds(175, 40, 400, 40); 
         panel.add(lblTitulo);
 
-        // FILA 1 — ID  / fecha nac
-        panel.add(crearLabel("ID"));//ID
-        JLabel lblIdemp = crearLabel("ID");
-        lblIdemp.setBounds(50, 65, 120, 30);
-        panel.add(lblIdemp);
+        // =========================================================================
+        // COLUMNA IZQUIERDA: DATOS GENERALES
+        // =========================================================================
         
-        RoundedTextField txtIdemp = new RoundedTextField();
-        txtIdemp.setText("000000");
-        txtIdemp.setBounds(180, 65, 120, 35);
-        panel.add(txtIdemp);
+        // NOMBRE 
+        JLabel lblNombre = crearLabel("NOMBRE(S)");
+        lblNombre.setBounds(50, 140, 140, 30);
+        panel.add(lblNombre);
 
-        JLabel lblFechaNac = crearLabel("FECHA DE NACIMIENTO");//hora de inicio
-        lblFechaNac.setBounds(360, 65, 130, 30);
-        panel.add(lblFechaNac);
+        txtNombre = new RoundedTextField();
+        txtNombre.setBounds(200, 140, 160, 35);
+        panel.add(txtNombre);
 
-        RoundedTextField txtFechaNac = new RoundedTextField();
-        txtFechaNac.setText("0000");
-        txtFechaNac.setBounds(500, 65, 120, 35);
-        panel.add(txtFechaNac);
-
-        // FILA 2 — Nombre / Puesto
-        JLabel lblNombreEmp = crearLabel("NOMBRE");
-        lblNombreEmp.setBounds(50, 130, 130, 30);
-        panel.add(lblNombreEmp);
-
-        RoundedTextField txtNombreEmp = new RoundedTextField();
-        txtNombreEmp.setText("0000");
-        txtNombreEmp.setBounds(180, 130, 120, 35);
-        panel.add(txtNombreEmp);
-        
-        JLabel lblPuestoEmp = crearLabel("PUESTO");//hora de fin
-        lblPuestoEmp.setBounds(360, 130, 130, 30);
-        panel.add(lblPuestoEmp);
-
-        RoundedTextField txtPuestoEmp = new RoundedTextField();
-        txtPuestoEmp.setText("0000");
-        txtPuestoEmp.setBounds(500, 130, 120, 35);
-        panel.add(txtPuestoEmp);
-        
-        // FILA 3 — Apellido pat / Dep
-        JLabel lblApellidoP = crearLabel("APELLIDO P");//Apellido paterno
-        lblApellidoP.setBounds(50, 200, 130, 30);
+        // APELLIDO PATERNO
+        JLabel lblApellidoP = crearLabel("APELLIDO P.");
+        lblApellidoP.setBounds(50, 220, 140, 30);
         panel.add(lblApellidoP);
 
-        RoundedTextField txtApellidoP = new RoundedTextField();
-        txtApellidoP.setText("0000");
-        txtApellidoP.setBounds(180, 200, 120, 35);
+        txtApellidoP = new RoundedTextField();
+        txtApellidoP.setBounds(200, 220, 160, 35);
         panel.add(txtApellidoP);
-        
-        JLabel lblDep = crearLabel("DEPARTAMENTO"); //Departamento
-        lblDep.setBounds(360, 200, 120, 30);
-        panel.add(lblDep);
 
-        RoundedComboBox cmbDep = new RoundedComboBox(new String[]{"sheccid", "chechid", "chesid"});
-        cmbDep.setBounds(500, 200, 120, 35);
-        panel.add(cmbDep);
-        
-        
-        //FILA 4 - Apellido materno / fecha de ingreso
-        JLabel lblApellidoM = crearLabel("APELLIDO M");//Apellido M
-        lblApellidoM.setBounds(50, 270, 200, 30);
+        // APELLIDO MATERNO 
+        JLabel lblApellidoM = crearLabel("APELLIDO M.");
+        lblApellidoM.setBounds(50, 300, 140, 30);
         panel.add(lblApellidoM);
 
-        RoundedTextField txtApellidoM = new RoundedTextField();
-        txtApellidoM.setText("0000");
-        txtApellidoM.setBounds(180, 270, 120, 35);
+        txtApellidoM = new RoundedTextField();
+        txtApellidoM.setBounds(200, 300, 160, 35);
         panel.add(txtApellidoM);
+
+        // =========================================================================
+        // COLUMNA DERECHA: PUESTO Y CALENDARIOS
+        // =========================================================================
         
-        JLabel lblFechaIng = crearLabel("FECHA DE INGRESO");//Fecha de ingreso
-        lblFechaIng.setBounds(360, 270, 140, 30);
+        // PUESTO 
+        JLabel lblPuesto = crearLabel("PUESTO");
+        lblPuesto.setBounds(400, 140, 130, 30);
+        panel.add(lblPuesto);
+
+        cmbPuesto = new RoundedComboBox(new String[]{"Profesor", "Administrativo", "Ambos"});
+        cmbPuesto.setBounds(540, 140, 160, 35);
+        cmbPuesto.setSelectedIndex(-1); 
+        panel.add(cmbPuesto);
+
+        // FECHA DE NACIMIENTO (JDateChooser)
+        JLabel lblFechaNac = crearLabel("F. NACIMIENTO");
+        lblFechaNac.setBounds(400, 220, 130, 30);
+        panel.add(lblFechaNac);
+
+        jdFechaNac = new JDateChooser();
+        jdFechaNac.setDateFormatString("yyyy-MM-dd"); // Obligamos a que la fecha se vea así
+        jdFechaNac.setBounds(540, 220, 160, 35);
+        panel.add(jdFechaNac);
+
+        // FECHA DE INGRESO (JDateChooser)
+        JLabel lblFechaIng = crearLabel("F. INGRESO");
+        lblFechaIng.setBounds(400, 300, 130, 30);
         panel.add(lblFechaIng);
 
-        RoundedTextField txtFechaIng = new RoundedTextField();
-        txtFechaIng.setText("0000");
-        txtFechaIng.setBounds(500, 270, 120, 35);
-        panel.add(txtFechaIng);
+        jdFechaIng = new JDateChooser();
+        jdFechaIng.setDateFormatString("yyyy-MM-dd");
+        jdFechaIng.setBounds(540, 300, 160, 35);
+        panel.add(jdFechaIng);
 
-        //Colores para los botones
-        Color azul   = new Color(79, 190, 220);
-        Color amarillo = new Color(255, 200, 80);
-        Color rosa   = new Color(255, 100, 130);
+        // =========================================================================
+        // BOTÓN DE ACCIÓN CENTRALIZADO 
+        // =========================================================================
+        Color rosa = new Color(255, 100, 130);
+        btnRegistrar = new RoundedButton("Terminar registro", rosa);
+        btnRegistrar.setBounds(265, 400, 220, 40);
+        panel.add(btnRegistrar);
 
-        //Botones de huella 
-        RoundedButton btnConsulta = new RoundedButton("Registrar huella", azul);
-        btnConsulta.setBounds(160, 340, 170, 40);
-        panel.add(btnConsulta);
-        
-        //Botón terminar registro
-        RoundedButton btnBaja = new RoundedButton("Terminar registro", rosa);
-        btnBaja.setBounds(360, 340, 170, 40);
-        panel.add(btnBaja);
-
+        // Asignación del evento clic
+        btnRegistrar.addActionListener(e -> ejecutarAltaEmpleado());
     }
 
     private JLabel crearLabel(String texto) {
         JLabel label = new JLabel(texto);
-        label.setFont(new Font("Arial", Font.BOLD, 18));
+        label.setFont(new Font("Arial", Font.BOLD, 16));
         return label;
+    }
+    
+    // --- LÓGICA DE VALIDACIÓN E INSERCIÓN EN AWS ---
+    private void ejecutarAltaEmpleado() {
+        String nombre = txtNombre.getText().trim();
+        String apPaterno = txtApellidoP.getText().trim();
+        String apMaterno = txtApellidoM.getText().trim();
+
+        // 1. Validar textos
+        if (nombre.isEmpty() || apPaterno.isEmpty() || apMaterno.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos de texto son obligatorios.", "Campos Vacíos", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // 2. Validar puesto
+        if (cmbPuesto.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione un puesto para el empleado.", "Falta Puesto", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String puesto = cmbPuesto.getSelectedItem().toString();
+
+        // 3. Validar que los calendarios no estén vacíos
+        if (jdFechaNac.getDate() == null || jdFechaIng.getDate() == null) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione ambas fechas en el calendario.", "Fechas Vacías", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // 4. Convertir la fecha del calendario de Java (java.util.Date) a formato SQL (java.sql.Date)
+        java.sql.Date fechaNacimiento = new java.sql.Date(jdFechaNac.getDate().getTime());
+        java.sql.Date fechaIngreso = new java.sql.Date(jdFechaIng.getDate().getTime());
+
+        // 5. Guardado en la nube
+        try (Connection con = ConexionBD.conectar()) {
+            if (con != null) {
+                String sql = "INSERT INTO Empleados (nombre, apellidop, apellidom, fecha_nac, puesto, fecha_ingreso, huella) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                
+                try (PreparedStatement ps = con.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setString(1, nombre);
+                    ps.setString(2, apPaterno);
+                    ps.setString(3, apMaterno);
+                    ps.setDate(4, fechaNacimiento); // Pasamos las fechas convertidas
+                    ps.setString(5, puesto);
+                    ps.setDate(6, fechaIngreso);
+                    
+                    // Simulación de la huella dactilar
+                    String huellaSimuladaStr = "01010101110011010101"; 
+                    byte[] huellaBytes = huellaSimuladaStr.getBytes();
+                    ps.setBytes(7, huellaBytes); 
+
+                    ps.executeUpdate();
+                    
+                    try (java.sql.ResultSet rs = ps.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            long matriculaGenerada = rs.getLong(1);
+                            JOptionPane.showMessageDialog(this, 
+                                "¡Empleado guardado exitosamente en AWS!\n\nMATRÍCULA ASIGNADA: " + matriculaGenerada, 
+                                "Registro Exitoso", 
+                                JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }
+                    
+                    limpiarFormulario();
+                }
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error al guardar en AWS RDS:\n" + ex.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void limpiarFormulario() {
+        txtNombre.setText("");
+        txtApellidoP.setText("");
+        txtApellidoM.setText("");
+        cmbPuesto.setSelectedIndex(-1);
+        jdFechaNac.setDate(null); // Esto blanquea el calendario
+        jdFechaIng.setDate(null); // Esto blanquea el calendario
     }
 }
