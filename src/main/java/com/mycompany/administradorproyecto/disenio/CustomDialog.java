@@ -1,5 +1,5 @@
 package com.mycompany.administradorproyecto.disenio;
- 
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,34 +8,35 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-
 public class CustomDialog extends JDialog {
- 
+
     public enum Tipo {
         EXITO,       
         ADVERTENCIA, 
         ERROR        
     }
- 
+
     // Colores del proyecto
     private static final Color AZUL     = new Color(79, 190, 220);
     private static final Color ROSA     = new Color(255, 100, 130);
     private static final Color FONDO    = new Color(245, 245, 245);
- 
-    private CustomDialog(Frame owner, String mensaje, Tipo tipo) {
+    
+    // Variable para saber si dijo que SÍ o NO
+    private boolean respuestaConfirmacion = false;
+
+    private CustomDialog(Frame owner, String mensaje, Tipo tipo, boolean esConfirmacion) {
         super(owner, true);
         setUndecorated(true);
         setSize(340, 220);
         setLocationRelativeTo(owner);
         setBackground(new Color(0, 0, 0, 0));
- 
+
         // Panel decorativo con círculos (mismo estilo que PanelDecorativo)
         JPanel contenido = new JPanel(null) {
             @Override
@@ -54,7 +55,7 @@ public class CustomDialog extends JDialog {
         };
         contenido.setOpaque(false);
         contenido.setPreferredSize(new Dimension(340, 220));
- 
+
         // Ícono
         String icoTexto;
         Color icoColor;
@@ -67,7 +68,7 @@ public class CustomDialog extends JDialog {
             default:
                 icoTexto = "X"; icoColor = ROSA.darker(); btnColor = ROSA.darker(); break;
         }
- 
+
         // Círculo con ícono
         JPanel circulo = new JPanel() {
             @Override protected void paintComponent(Graphics g) {
@@ -89,7 +90,7 @@ public class CustomDialog extends JDialog {
         circulo.add(lblIco, BorderLayout.CENTER);
         circulo.setBounds(148, 18, 44, 44);
         contenido.add(circulo);
- 
+
         // Mensaje (puede tener \n)
         String htmlMensaje = "<html><div style='text-align:center;'>" +
                 mensaje.replace("\n", "<br>") + "</div></html>";
@@ -98,19 +99,48 @@ public class CustomDialog extends JDialog {
         lblMensaje.setForeground(new Color(40, 40, 40));
         lblMensaje.setBounds(20, 72, 300, 70);
         contenido.add(lblMensaje);
- 
-        // Botón Aceptar
-        RoundedButton btnAceptar = new RoundedButton("Aceptar", btnColor);
-        btnAceptar.setBounds(110, 158, 120, 38);
-        btnAceptar.addActionListener(e -> dispose());
-        contenido.add(btnAceptar);
- 
+
+        // LÓGICA DE BOTONES (Aceptar normal o Sí/No)
+        if (esConfirmacion) {
+            RoundedButton btnSi = new RoundedButton("Sí, eliminar", btnColor);
+            btnSi.setBounds(40, 158, 120, 38);
+            btnSi.addActionListener(e -> {
+                respuestaConfirmacion = true;
+                dispose();
+            });
+            contenido.add(btnSi);
+
+            // Boton de cancelar en gris
+            Color gris = new Color(150, 150, 150);
+            RoundedButton btnNo = new RoundedButton("Cancelar", gris); 
+            btnNo.setBounds(180, 158, 120, 38);
+            btnNo.addActionListener(e -> {
+                respuestaConfirmacion = false;
+                dispose();
+            });
+            contenido.add(btnNo);
+        } else {
+            RoundedButton btnAceptar = new RoundedButton("Aceptar", btnColor);
+            btnAceptar.setBounds(110, 158, 120, 38);
+            btnAceptar.addActionListener(e -> dispose());
+            contenido.add(btnAceptar);
+        }
+
         setContentPane(contenido);
     }
- 
+
+    // Método original para mensajes de 1 solo botón
     public static void mostrar(java.awt.Component parent, String mensaje, Tipo tipo) {
         Frame frame = (Frame) SwingUtilities.getWindowAncestor(parent);
-        CustomDialog dlg = new CustomDialog(frame, mensaje, tipo);
+        CustomDialog dlg = new CustomDialog(frame, mensaje, tipo, false);
         dlg.setVisible(true);
+    }
+    
+    // NUEVO MÉTODO para hacer preguntas de Sí o No
+    public static boolean mostrarConfirmacion(java.awt.Component parent, String mensaje, Tipo tipo) {
+        Frame frame = (Frame) SwingUtilities.getWindowAncestor(parent);
+        CustomDialog dlg = new CustomDialog(frame, mensaje, tipo, true);
+        dlg.setVisible(true);
+        return dlg.respuestaConfirmacion;
     }
 }

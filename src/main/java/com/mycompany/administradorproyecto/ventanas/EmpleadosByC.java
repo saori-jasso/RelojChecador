@@ -1,28 +1,35 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.administradorproyecto.ventanas;
 
+import com.mycompany.administradorproyecto.bd.ConexionBD;
+import com.mycompany.administradorproyecto.disenio.CustomDialog;
 import com.mycompany.administradorproyecto.disenio.PanelDecorativo;
 import com.mycompany.administradorproyecto.disenio.RoundedButton;
-import com.mycompany.administradorproyecto.disenio.RoundedComboBox;
 import com.mycompany.administradorproyecto.disenio.RoundedTextField;
+
 import java.awt.Color;
 import java.awt.Font;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 public class EmpleadosByC extends JFrame {
-    //Constructor
+    
+    // Variables globales
+    private RoundedTextField txtMatriculaBusqueda;
+    private RoundedTextField txtNombre, txtApellidoP, txtApellidoM, txtFechaNac, txtFechaIng, txtPuesto;
+    private JLabel lblNombreEmp, lblApellidoP, lblApellidoM, lblFechaNac, lblFechaIng, lblPuestoEmp, lblEstadoHuella;
+    
     public EmpleadosByC() {
         configurarVentana();
         crearComponentes();
     }
-    //Vista Genral de la ventana
+    
     private void configurarVentana() {
-        setTitle("Bajas y consultas de empleados");
+        setTitle("Bajas y Consultas de Empleados");
         setSize(750, 550);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -31,115 +38,262 @@ public class EmpleadosByC extends JFrame {
     }
 
     private void crearComponentes() {
-        //Diseño del fondo
         PanelDecorativo panel = new PanelDecorativo();
-        panel.setBounds(0, 0, 700, 450);
+        panel.setBounds(0, 0, 750, 550);
         panel.setLayout(null);
         setContentPane(panel);
 
-        // Horarios 
+        // TÍTULO (Bajado a Y=40)
         JLabel lblTitulo = new JLabel("BAJAS Y CONSULTAS DE EMPLEADOS");
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 26));
         lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
-        lblTitulo.setBounds(50, 10, 600, 40);
+        lblTitulo.setBounds(50, 40, 650, 40);
         panel.add(lblTitulo);
 
-        // FILA 1 — ID  / fecha nac
-        panel.add(crearLabel("ID"));//ID
-        JLabel lblIdemp = crearLabel("ID");
-        lblIdemp.setBounds(50, 65, 120, 30);
-        panel.add(lblIdemp);
+        // =========================================================================
+        // ZONA DE BÚSQUEDA (Siempre visible)
+        // =========================================================================
+        JLabel lblBuscar = crearLabel("INGRESAR MATRÍCULA:");
+        lblBuscar.setBounds(70, 110, 200, 30);
+        panel.add(lblBuscar);
         
-        RoundedTextField txtIdemp = new RoundedTextField();
-        txtIdemp.setText("000000");
-        txtIdemp.setBounds(180, 65, 120, 35);
-        panel.add(txtIdemp);
-
-        JLabel lblFechaNac = crearLabel("FECHA DE NACIMIENTO");
-        lblFechaNac.setBounds(360, 65, 130, 30);
-        panel.add(lblFechaNac);
-
-        RoundedTextField txtFechaNac = new RoundedTextField();
-        txtFechaNac.setText("0000");
-        txtFechaNac.setBounds(500, 65, 120, 35);
-        panel.add(txtFechaNac);
-
-        // FILA 2 — Nombre / Puesto
-        JLabel lblNombreEmp = crearLabel("NOMBRE");
-        lblNombreEmp.setBounds(50, 130, 130, 30);
-        panel.add(lblNombreEmp);
-
-        RoundedTextField txtNombreEmp = new RoundedTextField();
-        txtNombreEmp.setText("0000");
-        txtNombreEmp.setBounds(180, 130, 120, 35);
-        panel.add(txtNombreEmp);
+        txtMatriculaBusqueda = new RoundedTextField();
+        txtMatriculaBusqueda.setBounds(270, 110, 120, 35);
+        panel.add(txtMatriculaBusqueda);
         
-        JLabel lblPuestoEmp = crearLabel("PUESTO");
-        lblPuestoEmp.setBounds(360, 130, 130, 30);
-        panel.add(lblPuestoEmp);
-
-        RoundedTextField txtPuestoEmp = new RoundedTextField();
-        txtPuestoEmp.setText("0000");
-        txtPuestoEmp.setBounds(500, 130, 120, 35);
-        panel.add(txtPuestoEmp);
+        Color azul = new Color(79, 190, 220);
+        Color rosa = new Color(255, 100, 130);
         
-        // FILA 3 — Apellido pat / Dep
-        JLabel lblApellidoP = crearLabel("APELLIDO P");//Apellido paterno
-        lblApellidoP.setBounds(50, 200, 130, 30);
-        panel.add(lblApellidoP);
-
-        RoundedTextField txtApellidoP = new RoundedTextField();
-        txtApellidoP.setText("0000");
-        txtApellidoP.setBounds(180, 200, 120, 35);
-        panel.add(txtApellidoP);
-        
-        JLabel lblDep = crearLabel("DEPARTAMENTO"); //Departamento
-        lblDep.setBounds(360, 200, 120, 30);
-        panel.add(lblDep);
-
-        RoundedComboBox cmbDep = new RoundedComboBox(new String[]{"sheccid", "chechid", "chesid"});
-        cmbDep.setBounds(500, 200, 120, 35);
-        panel.add(cmbDep);
-        
-        
-        //FILA 4 - Apellido materno / fecha de ingreso
-        JLabel lblApellidoM = crearLabel("APELLIDO M");//Apellido M
-        lblApellidoM.setBounds(50, 270, 200, 30);
-        panel.add(lblApellidoM);
-
-        RoundedTextField txtApellidoM = new RoundedTextField();
-        txtApellidoM.setText("0000");
-        txtApellidoM.setBounds(180, 270, 120, 35);
-        panel.add(txtApellidoM);
-        
-        JLabel lblFechaIng = crearLabel("FECHA DE INGRESO");//Fecha de ingreso
-        lblFechaIng.setBounds(360, 270, 140, 30);
-        panel.add(lblFechaIng);
-
-        RoundedTextField txtFechaIng = new RoundedTextField();
-        txtFechaIng.setText("0000");
-        txtFechaIng.setBounds(500, 270, 120, 35);
-        panel.add(txtFechaIng);
-
-        // Colores para botones
-        Color azul   = new Color(79, 190, 220);
-        Color amarillo = new Color(255, 200, 80);
-        Color rosa   = new Color(255, 100, 130);
-
-        //Botones de busqueda y eliminación
         RoundedButton btnConsulta = new RoundedButton("Buscar", azul);
-        btnConsulta.setBounds(160, 340, 170, 40);
+        btnConsulta.setBounds(410, 110, 110, 35);
+        btnConsulta.addActionListener(e -> buscarEmpleado());
         panel.add(btnConsulta);
         
         RoundedButton btnBaja = new RoundedButton("Eliminar", rosa);
-        btnBaja.setBounds(360, 340, 170, 40);
+        btnBaja.setBounds(540, 110, 110, 35);
+        btnBaja.addActionListener(e -> confirmarYEliminar());
         panel.add(btnBaja);
 
+        // =========================================================================
+        // ZONA DE RESULTADOS (Inicialmente oculta)
+        // =========================================================================
+        
+        // FILA 1
+        lblNombreEmp = crearLabel("NOMBRE");
+        lblNombreEmp.setBounds(50, 190, 130, 30);
+        panel.add(lblNombreEmp);
+
+        txtNombre = new RoundedTextField();
+        txtNombre.setBounds(180, 190, 140, 35);
+        txtNombre.setEditable(false); // Solo lectura
+        panel.add(txtNombre);
+        
+        lblPuestoEmp = crearLabel("PUESTO");
+        lblPuestoEmp.setBounds(370, 190, 130, 30);
+        panel.add(lblPuestoEmp);
+
+        txtPuesto = new RoundedTextField();
+        txtPuesto.setBounds(500, 190, 140, 35);
+        txtPuesto.setEditable(false);
+        panel.add(txtPuesto);
+        
+        // FILA 2
+        lblApellidoP = crearLabel("APELLIDO P.");
+        lblApellidoP.setBounds(50, 260, 130, 30);
+        panel.add(lblApellidoP);
+
+        txtApellidoP = new RoundedTextField();
+        txtApellidoP.setBounds(180, 260, 140, 35);
+        txtApellidoP.setEditable(false);
+        panel.add(txtApellidoP);
+        
+        lblFechaNac = crearLabel("F. NACIMIENTO");
+        lblFechaNac.setBounds(370, 260, 130, 30);
+        panel.add(lblFechaNac);
+
+        txtFechaNac = new RoundedTextField();
+        txtFechaNac.setBounds(500, 260, 140, 35);
+        txtFechaNac.setEditable(false);
+        panel.add(txtFechaNac);
+        
+        // FILA 3
+        lblApellidoM = crearLabel("APELLIDO M.");
+        lblApellidoM.setBounds(50, 330, 130, 30);
+        panel.add(lblApellidoM);
+
+        txtApellidoM = new RoundedTextField();
+        txtApellidoM.setBounds(180, 330, 140, 35);
+        txtApellidoM.setEditable(false);
+        panel.add(txtApellidoM);
+        
+        lblFechaIng = crearLabel("F. INGRESO");
+        lblFechaIng.setBounds(370, 330, 140, 30);
+        panel.add(lblFechaIng);
+
+        txtFechaIng = new RoundedTextField();
+        txtFechaIng.setBounds(500, 330, 140, 35);
+        txtFechaIng.setEditable(false);
+        panel.add(txtFechaIng);
+
+        // HUELLA
+        lblEstadoHuella = new JLabel("HUELLA: Pendiente");
+        lblEstadoHuella.setFont(new Font("Arial", Font.BOLD, 18));
+        lblEstadoHuella.setForeground(Color.GRAY);
+         // Aumentamos el ancho a 400 para que quepa todo el texto
+        lblEstadoHuella.setBounds(280, 410, 400, 30);
+        panel.add(lblEstadoHuella);
+
+        // Ocultar resultados al arrancar la ventana
+        ocultarResultados();
+        
+        //Botones para regresar-------------------------------
+        Color morado = new Color(130, 100, 210);
+        Font fuenteNavegacion = new Font("Arial", Font.BOLD, 14);
+        RoundedButton btnHome = new RoundedButton("⌂", morado);
+        btnHome.setFont(new Font("Arial", Font.BOLD, 18)); // Un poco más grande para el símbolo de casa
+        btnHome.setBounds(75, 20, 50, 35); // Al lado del botón volver
+            btnHome.addActionListener(e -> {
+            // 1. Abrir el menú principal
+            new Menu().setVisible(true);
+            // 2. Destruir la ventana actual
+            this.dispose(); 
+            });
+        panel.add(btnHome);
+        
+        
+        // ⏪️ Botón Volver Atrás (Flecha izquierda)
+        RoundedButton btnVolver = new RoundedButton("←", morado);
+        btnVolver.setFont(fuenteNavegacion);
+        btnVolver.setBounds(20, 20, 50, 35); // Esquina superior izquierda
+        btnVolver.addActionListener(e -> {
+            // 1. Instancias la ventana a la que quieres regresar (o usas una referencia)
+            // Supongamos que venías de una ventana llamada "GestionHorarios"
+            MenuAdministrativo ventanaAnterior = new MenuAdministrativo(); 
+            ventanaAnterior.setVisible(true);
+
+            // 2. Cierras por completo la ventana actual para que no se amontone
+            this.dispose(); 
+        });
+        panel.add(btnVolver);
     }
 
     private JLabel crearLabel(String texto) {
         JLabel label = new JLabel(texto);
-        label.setFont(new Font("Arial", Font.BOLD, 18));
+        label.setFont(new Font("Arial", Font.BOLD, 16));
         return label;
+    }
+
+    private void ocultarResultados() {
+        lblNombreEmp.setVisible(false); txtNombre.setVisible(false);
+        lblApellidoP.setVisible(false); txtApellidoP.setVisible(false);
+        lblApellidoM.setVisible(false); txtApellidoM.setVisible(false);
+        lblPuestoEmp.setVisible(false); txtPuesto.setVisible(false);
+        lblFechaNac.setVisible(false); txtFechaNac.setVisible(false);
+        lblFechaIng.setVisible(false); txtFechaIng.setVisible(false);
+        lblEstadoHuella.setVisible(false);
+    }
+
+    private void mostrarResultados() {
+        lblNombreEmp.setVisible(true); txtNombre.setVisible(true);
+        lblApellidoP.setVisible(true); txtApellidoP.setVisible(true);
+        lblApellidoM.setVisible(true); txtApellidoM.setVisible(true);
+        lblPuestoEmp.setVisible(true); txtPuesto.setVisible(true);
+        lblFechaNac.setVisible(true); txtFechaNac.setVisible(true);
+        lblFechaIng.setVisible(true); txtFechaIng.setVisible(true);
+        lblEstadoHuella.setVisible(true);
+    }
+
+    // =========================================================
+    // LÓGICA DE BÚSQUEDA
+    // =========================================================
+    private void buscarEmpleado() {
+        String matricula = txtMatriculaBusqueda.getText().trim();
+        
+        if (matricula.isEmpty()) {
+            CustomDialog.mostrar(this, "Por favor, ingrese una matrícula.", CustomDialog.Tipo.ADVERTENCIA);
+            return;
+        }
+
+        String sql = "SELECT nombre, apellidop, apellidom, puesto, fecha_nac, fecha_ingreso, huella FROM Empleados WHERE matricula = ?";
+
+        try (Connection con = ConexionBD.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, matricula);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // Llenar los campos
+                    txtNombre.setText(rs.getString("nombre"));
+                    txtApellidoP.setText(rs.getString("apellidop"));
+                    txtApellidoM.setText(rs.getString("apellidom"));
+                    txtPuesto.setText(rs.getString("puesto"));
+                    txtFechaNac.setText(rs.getString("fecha_nac"));
+                    txtFechaIng.setText(rs.getString("fecha_ingreso"));
+
+                    // Checar la huella
+                    byte[] huella = rs.getBytes("huella");
+                    if (huella != null && huella.length > 0) {
+                        lblEstadoHuella.setText("HUELLA: Registrada Exitosamente");
+                        lblEstadoHuella.setForeground(new Color(79, 190, 220)); // Azul si hay huella
+                    } else {
+                        lblEstadoHuella.setText("HUELLA: No Registrada");
+                        lblEstadoHuella.setForeground(new Color(255, 100, 130)); // Rosa si no hay
+                    }
+
+                    // Prender la visibilidad
+                    mostrarResultados();
+                } else {
+                    ocultarResultados();
+                    CustomDialog.mostrar(this, "No se encontró ningún empleado\ncon esa matrícula.", CustomDialog.Tipo.ADVERTENCIA);
+                }
+            }
+        } catch (SQLException ex) {
+            CustomDialog.mostrar(this, "Error de base de datos:\n" + ex.getMessage(), CustomDialog.Tipo.ERROR);
+        }
+    }
+
+    // =========================================================
+    // LÓGICA DE ELIMINACIÓN
+    // =========================================================
+    private void confirmarYEliminar() {
+        String matricula = txtMatriculaBusqueda.getText().trim();
+        
+        if (matricula.isEmpty()) {
+            CustomDialog.mostrar(this, "Por favor, ingrese la matrícula\ndel empleado a eliminar.", CustomDialog.Tipo.ADVERTENCIA);
+            return;
+        }
+
+        // Usamos nuestro nuevo CustomDialog que devuelve true o false
+        boolean seguro = CustomDialog.mostrarConfirmacion(
+                this, 
+                "¿Está completamente seguro de que\ndesea ELIMINAR al empleado\ncon matrícula " + matricula + "?", 
+                CustomDialog.Tipo.ADVERTENCIA
+        );
+
+        // Si presionó el botón "Sí, eliminar"
+        if (seguro) {
+            ejecutarBorrado(matricula);
+        }
+    }
+
+    private void ejecutarBorrado(String matricula) {
+        String sql = "DELETE FROM Empleados WHERE matricula = ?";
+
+        try (Connection con = ConexionBD.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, matricula);
+            int filasAfectadas = ps.executeUpdate();
+            
+            if (filasAfectadas > 0) {
+                ocultarResultados();
+                txtMatriculaBusqueda.setText("");
+                CustomDialog.mostrar(this, "Empleado eliminado del\nsistema correctamente.", CustomDialog.Tipo.EXITO);
+            } else {
+                CustomDialog.mostrar(this, "No se pudo eliminar.\nVerifique que la matrícula exista.", CustomDialog.Tipo.ERROR);
+            }
+        } catch (SQLException ex) {
+            CustomDialog.mostrar(this, "Error al eliminar:\n" + ex.getMessage(), CustomDialog.Tipo.ERROR);
+        }
     }
 }

@@ -51,6 +51,7 @@ public class Menu extends JFrame {
         btnHorarios.setBounds(botonX, 100, botonAncho, botonAlto);
         btnHorarios.addActionListener(e -> {
             new Horarios().setVisible(true);
+            this.dispose();
         });
         panel.add(btnHorarios);
 
@@ -60,6 +61,7 @@ public class Menu extends JFrame {
         btnEmpleados.setBounds(botonX, 210, botonAncho, botonAlto);
         btnEmpleados.addActionListener(e -> {
             new Empleados().setVisible(true);
+            this.dispose();
         });   
         panel.add(btnEmpleados);
         
@@ -69,6 +71,7 @@ public class Menu extends JFrame {
         btnChecadores.setBounds(botonX, 320, botonAncho, botonAlto);
         btnChecadores.addActionListener(e -> {
             new MenuChecador().setVisible(true);
+            this.dispose();
         });
         panel.add(btnChecadores);
     }
