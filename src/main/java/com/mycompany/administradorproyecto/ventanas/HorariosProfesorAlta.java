@@ -296,13 +296,34 @@ public class HorariosProfesorAlta extends JFrame {
 
     private RoundedComboBox crearComboHoraEntrada(PanelDecorativo p, String label, int x, int y) {
         JLabel lbl = new JLabel(label); lbl.setBounds(x, y - 25, 150, 20); p.add(lbl);
-        String[] h = new String[16]; h[0] = ""; for(int i=7; i<=21; i++) h[i-6] = String.format("%02d:00", i);
-        RoundedComboBox cmb = new RoundedComboBox(h); cmb.setBounds(x, y, 200, 35); p.add(cmb); return cmb;
+        // Horas regulares: 07:00 a 21:00
+        List<String> listaH = new ArrayList<>();
+        listaH.add("");
+        for (int i = 7; i <= 21; i++) listaH.add(String.format("%02d:00", i));
+        // Horas extra para pruebas: 23:00 a 03:45 en intervalos de 15 min
+        int[] horasExtra = {23, 0, 1, 2, 3};
+        for (int h : horasExtra) {
+            for (int min : new int[]{0, 15, 30, 45}) {
+                if (h == 3 && min == 45) break; // última es 03:45
+                listaH.add(String.format("%02d:%02d", h, min));
+            }
+        }
+        RoundedComboBox cmb = new RoundedComboBox(listaH.toArray(new String[0]));
+        cmb.setBounds(x, y, 200, 35); p.add(cmb); return cmb;
     }
 
     private RoundedComboBox crearComboHoraSalida(PanelDecorativo p, String label, int x, int y) {
         JLabel lbl = new JLabel(label); lbl.setBounds(x, y - 25, 150, 20); p.add(lbl);
-        String[] h = new String[16]; h[0] = ""; for(int i=7; i<=21; i++) h[i-6] = String.format("%02d:50", i);
-        RoundedComboBox cmb = new RoundedComboBox(h); cmb.setBounds(x, y, 200, 35); p.add(cmb); return cmb;
+        // Horas regulares: 07:50 a 21:50
+        List<String> listaH = new ArrayList<>();
+        listaH.add("");
+        for (int i = 7; i <= 21; i++) listaH.add(String.format("%02d:50", i));
+        // Horas extra para pruebas: 23:15 a 04:00 en intervalos de 15 min
+        String[] extras = {"23:15","23:30","23:45","00:00","00:15","00:30","00:45",
+                           "01:00","01:15","01:30","01:45","02:00","02:15","02:30","02:45",
+                           "03:00","03:15","03:30","03:45","04:00"};
+        for (String e : extras) listaH.add(e);
+        RoundedComboBox cmb = new RoundedComboBox(listaH.toArray(new String[0]));
+        cmb.setBounds(x, y, 200, 35); p.add(cmb); return cmb;
     }
 }
