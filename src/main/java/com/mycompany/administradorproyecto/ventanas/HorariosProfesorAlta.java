@@ -237,6 +237,7 @@ public class HorariosProfesorAlta extends JFrame {
                     }
                     con.commit();
                     CustomDialog.mostrar(this, "Horario registrado con éxito.", CustomDialog.Tipo.EXITO);
+                    limpiarFormulario();
                 }
             }
         } catch (Exception e) {
@@ -325,5 +326,21 @@ public class HorariosProfesorAlta extends JFrame {
         for (String e : extras) listaH.add(e);
         RoundedComboBox cmb = new RoundedComboBox(listaH.toArray(new String[0]));
         cmb.setBounds(x, y, 200, 35); p.add(cmb); return cmb;
+    }
+    
+    // Nuevo método al final de la clase:
+    private void limpiarFormulario() {
+        txtIdEmp.setText("");
+        txtIdGrupo.setText("");
+        txtClaveMateria.setText("");
+        txtAula.setText("");
+        cmbChecador.setSelectedIndex(0);
+        cmbHrInicio.setSelectedIndex(0);
+        cmbHrFin.setSelectedIndex(0);
+        lblNombreMateria.setText("Materia: -");
+        lblNombreMateria.setForeground(Color.BLACK);
+        for (RoundedCheckBox chk : chkDias) {
+            chk.setSelected(false);
+        }
     }
 }

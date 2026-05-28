@@ -19,6 +19,7 @@ com\mycompany\administradorproyecto\ventanas\HorariosProfesoresByC.class
 com\mycompany\administradorproyecto\ventanas\MenuAdministrativo.class
 com\mycompany\administradorproyecto\disenio\RoundedComboBox.class
 com\mycompany\administradorproyecto\main\AdministradorProyecto.class
+com\mycompany\administradorproyecto\main\ServidorChecador.class
 com\mycompany\administradorproyecto\ventanas\HorariosByC.class
 com\mycompany\administradorproyecto\model\Horarios.class
 com\mycompany\administradorproyecto\disenio\PanelDecorativo.class
@@ -35,3 +36,4 @@ com\mycompany\administradorproyecto\ventanas\HorarioException.class
 com\mycompany\administradorproyecto\ventanas\HorariosProfesorAlta$1.class
 com\mycompany\administradorproyecto\disenio\RoundedCheckBox$1.class
 com\mycompany\administradorproyecto\disenio\RoundedButton.class
+com\mycompany\administradorproyecto\main\ServidorChecador$HiloCliente.class

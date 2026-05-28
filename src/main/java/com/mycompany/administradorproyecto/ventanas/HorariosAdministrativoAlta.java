@@ -150,7 +150,7 @@ public class HorariosAdministrativoAlta extends JFrame {
                     }
                     con.commit();
                     CustomDialog.mostrar(this, "Registro administrativo guardado.", CustomDialog.Tipo.EXITO);
-                    //this.dispose();
+                    limpiarFormulario(); 
                 }
             }
         } catch (Exception e) {
@@ -239,5 +239,16 @@ public class HorariosAdministrativoAlta extends JFrame {
         for (String e : extras) listaH.add(e);
         RoundedComboBox cmb = new RoundedComboBox(listaH.toArray(new String[0]));
         cmb.setBounds(x, y, 200, 35); p.add(cmb); return cmb;
+    }
+    
+    // Nuevo método al final de la clase:
+    private void limpiarFormulario() {
+        txtMatricula.setText("");
+        cmbChecador.setSelectedIndex(-1);
+        cmbHrInicio.setSelectedIndex(0);
+        cmbHrFin.setSelectedIndex(0);
+        for (RoundedCheckBox chk : chkDias) {
+            chk.setSelected(false);
+        }
     }
 }
